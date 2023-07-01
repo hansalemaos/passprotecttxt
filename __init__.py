@@ -16,7 +16,8 @@ def encrypt_text(plaintext: str, password: str) -> str:
         None
     """
     backend = default_backend()
-    key = password.encode()[:32]
+    key = password.encode() + (32 * b"\x00")
+    key = key[:32]
     iv = b"\x00" * 16
 
     cipher = Cipher(algorithms.AES(key), modes.CTR(iv), backend=backend)
@@ -41,7 +42,8 @@ def decrypt_text(ciphertext: str, password: str) -> str:
     """
     ciphertext = base64.b16decode(ciphertext)
     backend = default_backend()
-    key = password.encode()[:32]
+    key = password.encode() + (32 * b"\x00")
+    key = key[:32]
     iv = b"\x00" * 16
 
     cipher = Cipher(algorithms.AES(key), modes.CTR(iv), backend=backend)
