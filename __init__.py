@@ -1,6 +1,8 @@
 import base64
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
+from LatinFixer import LatinFix
+
 
 def encrypt_text(plaintext: str, password: str) -> str:
     """Encrypts the given plaintext using AES encryption with CTR mode.
@@ -15,6 +17,8 @@ def encrypt_text(plaintext: str, password: str) -> str:
     Raises:
         None
     """
+
+    plaintext = ascii(plaintext)
     backend = default_backend()
     key = password.encode() + (32 * b"\x00")
     key = key[:32]
@@ -49,4 +53,9 @@ def decrypt_text(ciphertext: str, password: str) -> str:
     cipher = Cipher(algorithms.AES(key), modes.CTR(iv), backend=backend)
     decryptor = cipher.decryptor()
     plaintext = decryptor.update(ciphertext) + decryptor.finalize()
-    return plaintext.decode()
+
+    lfix = LatinFix(text=plaintext.decode(), debug=False)
+    lfix.apply_x_3_lower_case_escaped()
+
+
+    return lfix.text
