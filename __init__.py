@@ -18,7 +18,8 @@ def encrypt_text(plaintext: str, password: str) -> str:
         None
     """
 
-    plaintext = ascii(plaintext)
+    plaintext = ascii(plaintext)[1:-1]
+
     backend = default_backend()
     key = password.encode() + (32 * b"\x00")
     key = key[:32]
